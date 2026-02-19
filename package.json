@@ -1,0 +1,28 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dvdplate/deriv-algo-trading.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Dvdplate/deriv-algo-trading/issues"
+  },
+  "homepage": "https://github.com/Dvdplate/deriv-algo-trading#readme",
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "mongoose": "^9.2.1",
+    "technicalindicators": "^3.1.0",
+    "winston": "^3.19.0",
+    "ws": "^8.19.0"
+  }
+}
