@@ -14,7 +14,7 @@ const logger = winston.createLogger({
 class MarketData extends EventEmitter {
     constructor() {
         super();
-        this.symbol = '1HZ100V'; // BOOM 500
+        this.symbol = 'BOOM500'; // BOOM 500
         this.candles = []; // Store candles
         this.currentPrice = null;
         this.smas = {

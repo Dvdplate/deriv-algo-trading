@@ -49,7 +49,7 @@ class Execution extends EventEmitter {
     }
 
     // Step 1: Request Proposal
-    async requestProposal(symbol = '1HZ100V') {
+    async requestProposal(symbol = 'BOOM500') {
         const stake = process.env.STAKE_AMOUNT || 10;
         const multiplier = process.env.MULTIPLIER || 100;
         const currency = 'USD';
