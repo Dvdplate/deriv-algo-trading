@@ -180,15 +180,16 @@ class StrategyEngine extends EventEmitter {
 
     async executeTrade() {
         if (this.isTrading) return; // Prevent concurrent entries
+        this.isTrading = true;
 
         // Check Daily Cap
         const isCapReached = await riskGuardian.checkDailyCap();
         if (isCapReached) {
             logger.info("Daily Cap Reached. Trade aborted.");
+            this.isTrading = false;
             return;
         }
 
-        this.isTrading = true;
         execution.requestProposal();
     }
 
