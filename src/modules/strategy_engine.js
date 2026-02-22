@@ -60,6 +60,14 @@ class StrategyEngine extends EventEmitter {
     execution.on("trade_opened", () => {
       this.state.execution.activeTrade = true;
     });
+
+    execution.on("trade_closed", () => {
+      logger.info("🔄 Trade closed. Resetting internal state for next opportunity.");
+      this.state.execution.activeTrade = false;
+      this.state.execution.obBroken = false;
+      this.state.monitoring.idmSwept = false;
+      this.state.monitoring.armed = false;
+    });
   }
 
   processTimeframes() {
