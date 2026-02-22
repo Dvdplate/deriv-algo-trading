@@ -187,6 +187,11 @@ class StrategyEngine extends EventEmitter {
     // Slippage Guard placeholder
     // Time checks and trailing stop invalidation hooked here dynamically
   }
+
+  logAccountStatus() {
+    logger.info(`💰 Account Balance: ${this.accountBalance !== null ? '$' + Number(this.accountBalance).toFixed(2) : 'Awaiting data...'}`);
+    logger.info(`📊 Narrative Trend: ${this.state.narrative.trend || 'N/A'} | 🛡️ Monitoring Armed: ${this.state.monitoring.armed ? 'Yes' : 'No'} | ⚡ Active Trade: ${this.state.execution.activeTrade ? 'Yes' : 'No'}`);
+  }
 }
 
 module.exports = new StrategyEngine();
