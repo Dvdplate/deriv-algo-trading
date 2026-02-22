@@ -1,31 +1,31 @@
 version: '3.8'
 
 services:
-  boom-bot:
+  deriv-v75-bot:
     build: .
-    container_name: boom-bot
+    container_name: deriv-v75-bot
     depends_on:
       - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/boom500
+      - MONGO_URI=mongodb://mongo:27017/deriv_v75
       - NODE_ENV=production
     env_file:
       - .env
     networks:
-      - boom-net
+      - deriv-net
     restart: unless-stopped
 
   mongo:
     image: mongo:latest
-    container_name: boom-mongo
+    container_name: deriv-mongo
     volumes:
       - mongo-data:/data/db
     networks:
-      - boom-net
+      - deriv-net
     restart: unless-stopped
 
 networks:
-  boom-net:
+  deriv-net:
 
 volumes:
   mongo-data:

@@ -209,12 +209,12 @@ class ConnectionManager extends EventEmitter {
   startHeartbeat() {
     this.stopHeartbeat();
     logger.debug("💓 Starting WebSocket heartbeat", {
-      intervalMs: 10000,
+      intervalMs: 30000,
     });
     this.pingInterval = setInterval(() => {
       logger.debug("🏓 Sending ping heartbeat");
       this.send({ ping: 1 });
-    }, 10000); // 10 seconds
+    }, 30000); // 30 seconds
   }
 
   stopHeartbeat() {

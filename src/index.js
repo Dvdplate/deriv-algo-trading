@@ -21,7 +21,7 @@ const logger = winston.createLogger({
 
 const start = async () => {
   try {
-    logger.info("🚀 Starting BOOM 1000 Algo Trading Bot...");
+    logger.info("🚀 Starting Volatility 75 VDS-95 Algo Trading Bot...");
     await connectDB();
     connection.connect();
 

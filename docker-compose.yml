@@ -1,11 +1,11 @@
 services:
-  boom-bot:
+  deriv-v75-bot:
     build: .
-    container_name: boom-bot-dev
+    container_name: deriv-v75-bot-dev
     depends_on:
       - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/boom500_dev
+      - MONGO_URI=mongodb://mongo:27017/deriv_v75_dev
       - NODE_ENV=development
     env_file:
       - .env
@@ -13,23 +13,23 @@ services:
       - ./src:/app/src
       - ./package.json:/app/package.json
     networks:
-      - boom-net
+      - deriv-net
     restart: unless-stopped
     command: npm run dev
 
   mongo:
     image: mongo:latest
-    container_name: boom-mongo-dev
+    container_name: deriv-mongo-dev
     ports:
       - "27017:27017" # Expose MongoDB port for external access
     volumes:
       - mongo-data-dev:/data/db
     networks:
-      - boom-net
+      - deriv-net
     restart: unless-stopped
 
 networks:
-  boom-net:
+  deriv-net:
 
 volumes:
   mongo-data-dev:

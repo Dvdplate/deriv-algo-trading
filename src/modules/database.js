@@ -15,7 +15,7 @@ const logger = winston.createLogger({
 const connectDB = async () => {
   try {
     const mongoUri =
-      process.env.MONGO_URI || "mongodb://localhost:27017/boom500";
+      process.env.MONGO_URI || "mongodb://localhost:27017/deriv_algo";
     const conn = await mongoose.connect(mongoUri, {
       serverSelectionTimeoutMS: 5000,
     });

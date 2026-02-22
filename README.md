@@ -1,96 +1,70 @@
-# BOOM 500 Algorithmic Trading System
+# Volatility 75: VDS-95 Algorithmic Trading System (SMC)
 
-This project is a standalone, server-side algorithmic trading bot designed specifically for the Deriv BOOM 500 Synthetic Index. It implements a high-frequency "First Sell" scalping strategy, utilizing Moving Average clusters to filter out high-risk "Spike" zones and enforce strict risk management protocols.
+This project is a standalone, server-side algorithmic trading bot specifically engineered for **Volatility 75 (R_75)** on the Deriv platform. 
 
-**Target Market:** Deriv BOOM 500 Synthetic Index
-**Trading Style:** Scalping (Short/Sell/Put)
-**Profit Target:** $8.00 Daily Cap (Hard Limit)
-**Platform:** Node.js (Server-Side) + MongoDB
+It implements the strict, rules-based **VDS-95 (Volatility Demand SMC)** strategy. This system moves away from traditional indicators and relies purely on institutional Smart Money Concepts (SMC) and price action delivery, engineered targeting a back-tested high win-rate profile by mastering market structure.
+
+**Target Market:** Volatility 75 (R_75)
+**Trading Style:** Multi-Timeframe Structural Sweeps (SMC)
+**Risk Profile:** 1.5% Max Risk / 4.5% Max Daily Drawdown
+**Platform:** Node.js (Server-Side)
 
 ---
 
 ## 🚀 Key Features
 
-*   **Modular Architecture:** Built with separate modules for Connection, Market Data, Strategy, Execution, and Risk Management.
-*   **Real-time Analysis:** Subscribes to tick-by-tick data for instant trade execution.
-*   **SMA Trend Filtering:** Uses a cluster of Simple Moving Averages (200, 100, 50, 25) to identify "Safe Zones" and "Restricted Zones".
-*   **Risk Management:**
-    *   **Daily Profit Cap:** Automatically stops trading after reaching $8.00 USD profit.
-    *   **Train Detector:** Identifies consecutive spikes (momentum shifts) and triggers an emergency stop to prevent losses.
-    *   **Rate Limit Handling:** Automatically pauses for 60 seconds if API rate limits are hit.
-    *   **Buy Limit Protection:** Immediate shutdown if buy limits are reached.
-*   **Persistence:** MongoDB stores daily statistics and detailed trade history.
-*   **Dockerized:** Ready for deployment with Docker and Docker Compose.
+*   **Top-Down 3-Timeframe Narrative:** Analyzes the market from three perspectives: H1 (The Spotter), M15 (The Scout), and M5 (The Sniper).
+*   **Confluence execution:** Only triggers trades when an exact mathematical overlap between a Fair Value Gap (FVG) and an Order Block (OB) forms concurrently.
+*   **Institutional Structural Models:** Detects Break of Structure (BOS), Change of Character (CHoCH), and Liquidity Sweeps natively through automated candle-body mapping.
+*   **Deriv Multipliers API:** Programmatically maps `take_profit` and `stop_loss` targets straight to the brokerage routing using multiplier contract limits. 
+*   **Institutional-Grade Risk Manager:** Features a rigid 1.5% maximum margin risk-lock, a daily 4.5% drawdown Killswitch to protect capital, and restricts trading strictly to overlapping, high-volume London/New York sessions.
 
 ---
 
-## 📈 Strategy Overview: "First Sell" & MAC
+## 📈 The Strategy: VDS-95
 
-The core strategy capitalizes on the downward ticks of the Boom 500 index while avoiding upward spikes.
+The VDS-95 operates on the absolute rule that the Volatility 75 price delivery algorithm is mathematically obligated to rebalance price inefficiencies. 
 
-### 1. The SMA Cluster
-The bot calculates four Simple Moving Averages based on **closed** 1-minute candles to determine market trend and safety:
-*   **SMA 200 (Blue):** Major Trend Baseline.
-*   **SMA 100 (Green):** Intermediate Trend.
-*   **SMA 50 (Yellow):** Short-term Trend.
-*   **SMA 25 (Red):** Signal Trigger.
+### Stage 1: The Narrative (Timeframe: H1)
+*   **The Spotter:** The system analyzes H1 to dictate the overall narrative trend (BULLISH vs BEARISH).
+*   **FVG Overlap:** Looks for explosive moves leaving a Fair Value Gap (FVG) that directly overlaps with the initiating Order Block (OB).
+*   If the exact mathematical threshold is met, the underlying narrative is validated.
 
-### 2. Market States
-*   **RESTRICTED (Danger Zone):**
-    *   Condition: Current Price >= SMA 200 OR SMA 100 OR SMA 50.
-    *   Action: All buying is blocked. Open positions are closed immediately.
-*   **PERMISSIVE (Safe Zone):**
-    *   Condition: Current Price < SMA 200 AND SMA 100 AND SMA 50.
-    *   Action: Entry logic is enabled.
+### Stage 2: Liquidity Mapping (Timeframe: M15)
+*   **The Scout:** Scans the 15-minute chart to map the closest minor Swing Highs/Lows acting as Inducement (IDM).
+*   **The Sweep:** The bot physically arms its execution modules *only* after it detects a Wick Sweep (price pierces the IDM with a wick, but closes the body back inside the range).
 
-### 3. Entry Logic (The "First Sell")
-When in the **PERMISSIVE** state:
-1.  **Spike Detection:** Monitors tick updates. If `Delta > 4.0` (price jumps up), a spike is detected.
-2.  **Verification:** Checks if the spike pushed the price *above* the SMAs.
-3.  **Execution:** If Price is still < SMAs (Market State remains PERMISSIVE), execute a **SELL** (Put) contract immediately.
-
-### 4. Crossover Guard
-If SMA 25 crosses ABOVE SMA 50 or SMA 100, momentum is shifting bullish. The bot closes all trades and enters a cooldown period.
+### Stage 3: The Execution Trigger (Timeframe: M5)
+*   **The Sniper:** Once armed, the M5 monitors for a localized Change of Character (CHoCH) moving in the direction of the H1 narrative.
+*   **Confluence Check:** The bot verifies that the trigger itself features an overlapping FVG and Order Block.
+*   **Entry Mapping:** Calculates the 50% equilibrium mark of the new M5 FVG and fires a `MULTUP` or `MULTDOWN` Limit Order directly to the broker.
 
 ---
 
-## 🛡️ Risk Management (The "Iron Rules")
+## 🛡️ The "Iron Rules" (Risk Management)
 
-### Daily Profit Cap
-*   **Goal:** Consistent, small daily gains.
-*   **Limit:** $8.00 USD.
-*   **Action:** Once the daily profit hits or exceeds $8.00, the bot enters "Sleep Mode" until the next day (00:00 GMT).
+You can have the slickest entry strategy on the planet, but if you don't have rock-solid institutional-grade risk management, you're just gambling.
 
-### The "Train" Detector
-*   **Logic:** Monitors the last 5 ticks.
-*   **Trigger:** Two consecutive ticks with `Delta > 4.0` (Back-to-back spikes).
-*   **Action:** "Emergency Brake" - Cancels all pending logic, closes open trades, and pauses the bot for 15 minutes.
-
----
-
-## 🛠️ Technology Stack
-
-*   **Runtime:** Node.js (v18+)
-*   **Database:** MongoDB (Mongoose ODM)
-*   **Communication:** WebSocket (ws) for Deriv API
-*   **Indicators:** `technicalindicators` library
-*   **Containerization:** Docker & Docker Compose
+1.  **Strict 1.5% Allocation:** The system calculates sizing dynamically. Stop Loss must NEVER exceed precisely 1.5% of the total account balance. *(Amount = (Account Balance * 0.015) * (Multiplier / Stop Loss Distance in Points))*
+2.  **Max Daily Drawdown (4.5%):** If the bot registers three back-to-back 1.5% losses (a peak-to-trough drop of 4.5%), an automated 24-hour killswitch trips to protect remaining capital. 
+3.  **Mandatory 1:3 Risk-to-Reward:** Limit proposals will abort natively if the structural distance of the closest liquidity target does not clear a strict 1-to-3 minimum margin ratio. 
+4.  **Session Activity Wall:** Trading algorithms are fully suspended outside of high-volume overlaps. It trades exclusively between 08:00 GMT and 21:00 GMT. 
 
 ---
 
 ## 🏁 Getting Started
 
 ### Prerequisites
-1.  **Deriv Account:** You need a Deriv account and an API Token with `read` and `trade` permissions.
-2.  **Docker:** Ensure Docker and Docker Compose are installed on your machine.
-3.  **App ID:** Register an application on Deriv to get an App ID (or use default `1089` for testing).
+1.  **Deriv Account:** A Deriv account and an API Token with `read` and `trade` permissions.
+2.  **Docker (Optional):** Ensure Docker and Docker Compose are installed on your machine.
+3.  **App ID:** Register an application on Deriv to get an App ID.
 
 ### Installation
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/your-repo/boom-500-algo-bot.git
-    cd boom-500-algo-bot
+    git clone https://github.com/your-repo/deriv-algo-trading.git
+    cd deriv-algo-trading
     ```
 
 2.  **Configure Environment:**
@@ -101,29 +75,19 @@ If SMA 25 crosses ABOVE SMA 50 or SMA 100, momentum is shifting bullish. The bot
     Edit `.env` and fill in your details:
     ```env
     DERIV_TOKEN=your_deriv_api_token_here
-    APP_ID=1089
-    MONGO_URI=mongodb://mongo:27017/boom500
-    STAKE_AMOUNT=10
-    MULTIPLIER=100
+    APP_ID=your_app_id
     ```
+    *(Stake amount is now calculated dynamically under the 1.5% rule, bypassing fixed configuration inputs).*
 
-3.  **Run with Docker Compose:**
-    Build and start the services (Bot + MongoDB):
+3.  **Run with Node:**
+    ```bash
+    npm install
+    node src/index.js
+    ```
+    Or via Docker Compose:
     ```bash
     docker-compose up --build -d
     ```
-
-4.  **Verify Operation:**
-    Check the logs to ensure the bot is connected and running:
-    ```bash
-    docker-compose logs -f boom-bot
-    ```
-
-### Manual Run (Local Node.js)
-If you prefer running without Docker:
-1.  Install MongoDB locally or use a cloud URI.
-2.  Install dependencies: `npm install`
-3.  Start the bot: `npm start`
 
 ---
 
@@ -132,20 +96,16 @@ If you prefer running without Docker:
 ```
 ├── src/
 │   ├── config/          # Configuration files
-│   ├── models/          # Mongoose Schemas (DailyStat, Trade)
+│   ├── models/          # Database structural layouts
 │   ├── modules/
-│   │   ├── connection.js      # WebSocket manager
-│   │   ├── database.js        # MongoDB connection
-│   │   ├── execution.js       # Trade execution (Buy/Sell)
-│   │   ├── market_data.js     # Tick/Candle subscription & SMA calc
-│   │   ├── risk_guardian.js   # Profit Cap & Train Logic
-│   │   └── strategy_engine.js # Core trading logic & state machine
+│   │   ├── connection.js      # WebSocket manager (WSS) 
+│   │   ├── database.js        # Data Persistence 
+│   │   ├── execution.js       # Trade execution (Multiplier limits)
+│   │   ├── market_data.js     # Tick/Candle subscription (H1, M15, M5)
+│   │   ├── risk_guardian.js   # 1.5% scaling, 4.5% Drawdown Killswitch
+│   │   └── strategy_engine.js # VDS-95 Logic State Machine
 │   └── index.js         # Entry point
-├── Dockerfile           # Docker image definition
-├── docker-compose.yml   # Service orchestration
-├── .env.example         # Environment variables template
-└── package.json         # Dependencies
 ```
 
 ## ⚠️ Disclaimer
-Trading synthetic indices involves significant risk. This bot is provided for educational purposes only. Use at your own risk. The authors are not responsible for any financial losses incurred.
+Trading synthetic volatility indices involves significant risk. This system's back-tested analytics do not guarantee forward-tested profitability. This bot is meant as educational execution logic surrounding Smart Money Concepts. Use strictly at your own financial risk.

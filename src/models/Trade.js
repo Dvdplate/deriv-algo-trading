@@ -8,7 +8,7 @@ const TradeSchema = new mongoose.Schema({
   }, // Deriv Contract ID
   symbol: {
     type: String,
-    default: "BOOM1000",
+    default: "R_75",
   },
   entry_time: {
     type: Date,
