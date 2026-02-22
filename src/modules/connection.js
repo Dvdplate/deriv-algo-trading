@@ -20,7 +20,7 @@ class ConnectionManager extends EventEmitter {
     this.ws = null;
     this.appId = process.env.APP_ID || "1089"; // Default or from env
     this.token = process.env.DERIV_TOKEN;
-    this.endpoint = `wss://ws.binaryws.com/websockets/v3?app_id=${this.appId}`;
+    this.endpoint = `wss://ws.derivws.com/websockets/v3?app_id=${this.appId}`;
     this.pingInterval = null;
     this.reconnectAttempts = 0;
     this.isExplicitlyClosed = false;
