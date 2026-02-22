@@ -1,25 +1,31 @@
-version: '3.8'
+version: "3.8"
 
 services:
   boom-bot:
     build: .
-    container_name: boom-bot
+    container_name: boom-bot-dev
     depends_on:
       - mongo
     environment:
-      - MONGO_URI=mongodb://mongo:27017/boom500
-      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/boom500_dev
+      - NODE_ENV=development
     env_file:
       - .env
+    volumes:
+      - ./src:/app/src
+      - ./package.json:/app/package.json
     networks:
       - boom-net
     restart: unless-stopped
+    command: npm run dev
 
   mongo:
     image: mongo:latest
-    container_name: boom-mongo
+    container_name: boom-mongo-dev
+    ports:
+      - "27017:27017" # Expose MongoDB port for external access
     volumes:
-      - mongo-data:/data/db
+      - mongo-data-dev:/data/db
     networks:
       - boom-net
     restart: unless-stopped
@@ -28,4 +34,4 @@ networks:
   boom-net:
 
 volumes:
-  mongo-data:
+  mongo-data-dev:
