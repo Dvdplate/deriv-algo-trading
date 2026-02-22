@@ -181,7 +181,7 @@ class StrategyEngine extends EventEmitter {
     if (this.marketState === "PERMISSIVE") {
       logger.debug("✅ Market is PERMISSIVE - checking spike conditions");
       // Scenario A: First Sell
-      // Spike Detection: Delta > 4.0 (Boom 500 spikes UP)
+      // Spike Detection: Delta > 4.0 (Boom 1000 spikes UP)
       logger.debug("🔍 Spike detection analysis", {
         delta,
         spikeThreshold: 4.0,
