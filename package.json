@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,5 +26,8 @@
     "technicalindicators": "^3.1.0",
     "winston": "^3.19.0",
     "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }
