@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const DailyStatSchema = new mongoose.Schema({
     date: {
@@ -20,4 +20,4 @@ const DailyStatSchema = new mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('DailyStat', DailyStatSchema);
+export default mongoose.model('DailyStat', DailyStatSchema);

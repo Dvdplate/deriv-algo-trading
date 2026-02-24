@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const TradeSchema = new mongoose.Schema({
   contract_id: {
@@ -34,12 +34,15 @@ const TradeSchema = new mongoose.Schema({
   profit: {
     type: Number,
   }, // Absolute value (e.g., -0.50 or +1.20)
+  account_balance: {
+    type: Number,
+  },
   // Meta
   trigger_reason: {
     type: String,
-    enum: ["FIRST_SELL", "TEST"],
-    default: "FIRST_SELL",
+    enum: ["MULTUP", "MULTDOWN"],
+    default: "MULTUP",
   },
 });
 
-module.exports = mongoose.model("Trade", TradeSchema);
+export default mongoose.model("Trade", TradeSchema);

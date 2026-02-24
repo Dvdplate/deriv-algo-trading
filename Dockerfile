@@ -1,11 +1,5 @@
 FROM node:18-alpine
 
 WORKDIR /app
-
-COPY package*.json ./
-
-RUN npm install
-
-COPY . .
-
-CMD ["node", "src/index.js"]
+COPY backend /app/backend
+RUN cd backend && npm install
