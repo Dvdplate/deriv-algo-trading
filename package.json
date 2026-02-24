@@ -1,0 +1,14 @@
+{
+  "name": "deriv-algo-trading",
+  "version": "1.0.0",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "backend:dev": "docker-compose up",
+    "frontend:dev": "cd frontend && npm run dev"
+  },
+  "description": "A full-stack algorithmic trading bot for Deriv, featuring a Node.js/MongoDB backend and a React frontend dashboard.",
+  "private": true
+}
