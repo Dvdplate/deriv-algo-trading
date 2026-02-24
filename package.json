@@ -6,6 +6,7 @@
     "backend"
   ],
   "scripts": {
+    "setup": "npm install && docker-compose build",
     "backend:dev": "docker-compose up",
     "frontend:dev": "cd frontend && npm run dev"
   },
