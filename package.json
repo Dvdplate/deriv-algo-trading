@@ -8,7 +8,7 @@
   "scripts": {
     "setup": "npm install && docker-compose build",
     "backend:dev": "docker-compose up",
-    "frontend:dev": "cd frontend && npm run dev"
+    "frontend:dev": "cd frontend && npm run start"
   },
   "description": "A full-stack algorithmic trading bot for Deriv, featuring a Node.js/MongoDB backend and a React frontend dashboard.",
   "private": true
