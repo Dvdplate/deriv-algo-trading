@@ -106,11 +106,11 @@ export default class Volatility100Strategy extends Deriv {
         // INVERTED LOGIC: 
         // If price violently breaks UPPER band, we expect a reversal DOWN (SHORT)
         if (price > upper) {
-          this.executeTrade("MULTDOWN", "down");
+          this.executeTrade("MULTUP", "up");
         } 
         // If price violently breaks LOWER band, we expect a reversal UP (LONG)
         else if (price < lower) {
-          this.executeTrade("MULTUP", "up");
+          this.executeTrade("MULTDOWN", "down");
         }
         
         // Re-evaluate Squeeze continuously. If it expands prior to triggers, disarm.

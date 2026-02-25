@@ -16,43 +16,51 @@ const Dashboard = () => {
   const [balanceHistory, setBalanceHistory] = useState([]);
   const [trades, setTrades] = useState([]);
 
-  // Hydrate today's trades from the database on mount
+  // Load today's trades from database
+  const loadTodaysTrades = useCallback(async () => {
+    try {
+      const dbTrades = await tradesAPI.getToday();
+
+      // Map DB trades to UI shape (newest first for the list)
+      const uiTrades = dbTrades.map(t => ({
+        id: t.contract_id,
+        symbol: t.symbol,
+        action: t.trigger_reason === 'MULTUP' ? 'BUY' : 'SELL',
+        status: t.status,
+        profit: t.profit,
+        time: new Date(t.entry_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      })).reverse();
+      setTrades(uiTrades);
+
+      // Build balance history from closed trades (they have account_balance stored)
+      const closedTrades = dbTrades.filter(t => t.status === 'CLOSED' && t.account_balance != null);
+      const history = closedTrades.map(t => ({
+        time: new Date(t.exit_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        balance: t.account_balance,
+      }));
+      setBalanceHistory(history);
+
+      // Set the current balance from the most recent closed trade
+      if (closedTrades.length > 0) {
+        setAccountBalance(closedTrades[closedTrades.length - 1].account_balance);
+      }
+    } catch (err) {
+      console.warn('Could not load today\'s trades:', err.message);
+    }
+  }, []);
+
+  // Hydrate on mount + re-hydrate when tab becomes visible again
   useEffect(() => {
-    const loadTodaysTrades = async () => {
-      try {
-        const dbTrades = await tradesAPI.getToday();
+    loadTodaysTrades();
 
-        // Map DB trades to UI shape (newest first for the list)
-        const uiTrades = dbTrades.map(t => ({
-          id: t.contract_id,
-          symbol: t.symbol,
-          action: t.trigger_reason === 'MULTUP' ? 'BUY' : 'SELL',
-          status: t.status,
-          profit: t.profit,
-          time: new Date(t.entry_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-        })).reverse();
-        setTrades(uiTrades);
-
-        // Build balance history from closed trades (they have account_balance stored)
-        const closedTrades = dbTrades.filter(t => t.status === 'CLOSED' && t.account_balance != null);
-        const history = closedTrades.map(t => ({
-          time: new Date(t.exit_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-          balance: t.account_balance,
-        }));
-        setBalanceHistory(history);
-
-        // Set the current balance from the most recent closed trade
-        if (closedTrades.length > 0) {
-          setAccountBalance(closedTrades[closedTrades.length - 1].account_balance);
-        }
-      } catch (err) {
-        // Silently fail — WS will push live data anyway
-        console.warn('Could not load today\'s trades:', err.message);
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadTodaysTrades();
       }
     };
-
-    loadTodaysTrades();
-  }, []);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [loadTodaysTrades]);
 
   // Process incoming messages
   useEffect(() => {
