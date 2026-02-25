@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { Box, Stack, Typography, Card, CardContent, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import PauseIcon from '@mui/icons-material/Pause';
@@ -94,6 +94,12 @@ const Dashboard = () => {
     }
   }, [botStatus, sendMessage, isConnected]);
 
+  const dailyPnl = useMemo(() => {
+    return trades
+      .filter(t => t.status === 'CLOSED' && t.profit != null)
+      .reduce((sum, t) => sum + t.profit, 0);
+  }, [trades]);
+
 
   return (
     <Stack spacing={3} sx={{ height: '100%', minHeight: 0 }}>
@@ -125,6 +131,9 @@ const Dashboard = () => {
         <Box>
           <Typography variant="h4" fontWeight="bold">
             Trading Dashboard
+            <Typography component="span" variant="h5" fontWeight="bold" sx={{ ml: 1.5, color: dailyPnl >= 0 ? 'success.main' : 'error.main' }}>
+              | {dailyPnl >= 0 ? '+' : ''}${dailyPnl.toFixed(2)}
+            </Typography>
           </Typography>
           <Typography variant="body2" color={isConnected ? 'success.main' : 'warning.main'}>
             WebSocket: {isConnected ? 'Connected' : 'Disconnected'}
