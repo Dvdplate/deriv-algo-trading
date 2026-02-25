@@ -10,6 +10,7 @@ export default class Volatility100Strategy extends Deriv {
     this.isArmed = false;
     this.isTradeOpen = false;
     this.isPaused = false;
+    this.isManuallyPaused = false;
     this.currentContractId = null;
     this.activeTradeDirection = null; // 'up' or 'down'
     this.accountBalance = 0;
@@ -54,6 +55,24 @@ export default class Volatility100Strategy extends Deriv {
     }, ms);
   }
 
+  /**
+   * Manually pause the strategy (from UI). Does NOT auto-resume.
+   */
+  pauseManual() {
+    this.isManuallyPaused = true;
+    this.isPaused = true;
+    console.log('⏸️ Strategy MANUALLY PAUSED by user.');
+  }
+
+  /**
+   * Resume from a manual pause (from UI).
+   */
+  resumeManual() {
+    this.isManuallyPaused = false;
+    this.isPaused = false;
+    console.log('▶️ Strategy MANUALLY RESUMED by user.');
+  }
+
   // ------------------------------------------------------------------------
   // Deriv Base Overrides
   // ------------------------------------------------------------------------
@@ -62,7 +81,7 @@ export default class Volatility100Strategy extends Deriv {
    * Invoked continually by the base WS class whenever a new tick streams.
    */
   onTick(tickData) {
-    if (this.isPaused) return;
+    if (this.isPaused || this.isManuallyPaused) return;
 
     const price = tickData.quote;
     
@@ -114,6 +133,17 @@ export default class Volatility100Strategy extends Deriv {
       this.accountBalance += contractInfo.profit;
       console.log(`✅ Closed trade bet ${this.activeTradeDirection.toUpperCase()} | Profit: $${contractInfo.profit} | New Balance: $${this.accountBalance.toFixed(2)}`);
       await recordTradeExit(this.currentContractId, contractInfo.sell_price, contractInfo.profit, this.accountBalance);
+      
+      // Notify UI
+      this.onUITradeClose({
+        id: this.currentContractId,
+        symbol: config.SYMBOL,
+        action: this.activeTradeDirection === 'up' ? 'BUY' : 'SELL',
+        profit: contractInfo.profit,
+        sellPrice: contractInfo.sell_price,
+      });
+      this.onUIBalanceChange(this.accountBalance);
+
       this._cleanupTrade();
     }
   }
@@ -190,6 +220,14 @@ export default class Volatility100Strategy extends Deriv {
       
       console.log(`✅ Made trade bet ${directionLabel.toUpperCase()}`);
 
+      // Notify UI
+      this.onUITradeOpen({
+        id: this.currentContractId,
+        symbol: config.SYMBOL,
+        action: directionLabel === 'up' ? 'BUY' : 'SELL',
+        buyPrice: buyResponse.buy.buy_price,
+      });
+
       // Async log entry to DB
       recordTradeEntry(this.currentContractId, config.SYMBOL, buyResponse.buy.buy_price, contractType);
 
@@ -208,4 +246,11 @@ export default class Volatility100Strategy extends Deriv {
     this.isTradeOpen = false;
     this.isArmed = false; // Require a fresh squeeze to take new action
   }
+
+  // ------------------------------------------------------------------------
+  // UI Hooks (Override in index.js to broadcast to frontend clients)
+  // ------------------------------------------------------------------------
+  onUITradeOpen(tradeInfo) { }
+  onUITradeClose(tradeInfo) { }
+  onUIBalanceChange(balance) { }
 }

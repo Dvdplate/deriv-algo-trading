@@ -27,7 +27,13 @@ npm run setup
 
 ### 2. Environment Variables
 
-Create a `.env` file in the root directory (you can copy `.env.example` if it exists) and add your Deriv API token and other necessary configurations.
+The project uses a **single, unified `.env` file** in the root directory that is shared between both the frontend and backend. 
+
+Copy the provided example file:
+```bash
+cp .env.example .env
+```
+Then, edit the `.env` file in the root to add your **Deriv API token**, Database configs, frontend variables (like `REACT_APP_BACKEND_PORT`), and default admin credentials.
 
 ### 3. Run the Backend
 
