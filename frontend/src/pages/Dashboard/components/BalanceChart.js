@@ -21,9 +21,9 @@ const CustomTooltip = ({ active, payload, label }) => {
       px: 1.5, py: 1,
       boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
     }}>
-      <Typography variant="caption" color="text.secondary" display="block">{label}</Typography>
+      <Typography variant="caption" color="text.secondary" display="block">Time: {label}</Typography>
       <Typography variant="body2" fontWeight={700} color="primary.main">
-        ${Number(payload[0].value).toFixed(2)}
+        Balance: ${Number(payload[0].value).toFixed(2)}
       </Typography>
     </Box>
   );

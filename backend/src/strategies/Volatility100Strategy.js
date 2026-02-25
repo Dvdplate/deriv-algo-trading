@@ -159,7 +159,7 @@ export default class Volatility100Strategy extends Deriv {
   // ------------------------------------------------------------------------
 
   _checkSqueeze(bandwidth) {
-    if (bandwidth < config.SQUEEZE_THRESHOLD) {
+    if (bandwidth > config.SQUEEZE_THRESHOLD) {
       if (!this.isArmed) {
         // Uncomment to see logs if desired
         // console.log(`🔫 SQUEEZE DETECTED! (Bandwidth: ${bandwidth.toFixed(6)})`);

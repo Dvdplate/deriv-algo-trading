@@ -144,7 +144,7 @@ const Dashboard = () => {
           <Card sx={{ minWidth: 200 }}>
             <CardContent sx={{ py: '16px !important', px: 3 }}>
               <Typography variant="body2" color="text.secondary">Current Balance</Typography>
-              <Typography variant="h5" fontWeight="bold" color={accountBalance == null ? 'text.secondary' : accountBalance >= 10000 ? 'success.main' : 'error.main'}>
+              <Typography variant="h5" fontWeight="bold" color={'white'}>
                 {accountBalance != null ? `$${accountBalance.toFixed(2)}` : '—'}
               </Typography>
             </CardContent>
