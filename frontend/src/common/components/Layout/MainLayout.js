@@ -7,6 +7,13 @@ import { useNavigate } from 'react-router-dom';
 const MainLayout = ({ children }) => {
   const navigate = useNavigate();
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('user');
@@ -18,8 +25,8 @@ const MainLayout = ({ children }) => {
       <AppBar position="static" color="transparent" elevation={0} sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <Toolbar>
           <DashboardIcon sx={{ mr: 2, color: 'primary.main' }} />
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700 }}>
-            AlgoTrader Pro
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: 700, textTransform: 'capitalize' }}>
+            {getGreeting()}
           </Typography>
 
           <Stack direction="row" spacing={2} alignItems="center">
