@@ -17,8 +17,7 @@ const ProtectedRoute = ({ children }) => {
   const isAuthenticated = localStorage.getItem('isAuthenticated');
   // If no auth flag exists, immediately redirect to login.
   if (!isAuthenticated) {
-    // return <Navigate to="/login" replace />;
-    return children; // For dev purposes, bypassing auth initially
+    return <Navigate to="/login" replace />;
   }
   return children;
 };

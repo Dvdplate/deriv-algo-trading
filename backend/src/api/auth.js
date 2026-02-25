@@ -1,10 +1,9 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import { JWT_SECRET, COOKIE_NAME } from '../authConfig.js';
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-trading-key-12345';
-const COOKIE_NAME = 'session_token';
 
 // Middleware to protect routes (can be exported if needed elsewhere)
 export const authenticateToken = (req, res, next) => {
@@ -25,6 +24,12 @@ router.post('/register', async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // 1. Input Validation
+    if (!email || !password) return res.status(400).json({ message: 'Email and password are required.' });
+    if (password.length < 6) return res.status(400).json({ message: 'Password must be at least 6 characters.' });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return res.status(400).json({ message: 'Invalid email format.' });
+
     let user = await User.findOne({ email });
     if (user) return res.status(400).json({ message: 'User already exists' });
 
@@ -44,7 +49,8 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ message: 'User registered successfully', user: { email: user.email } });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error('Registration Error:', error.message);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
@@ -72,13 +78,18 @@ router.post('/login', async (req, res) => {
 
     res.json({ message: 'Logged in successfully', user: { email: user.email } });
   } catch (error) {
-    res.status(500).json({ message: 'Server Error', error: error.message });
+    console.error('Login Error:', error.message);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
 // @route POST /api/auth/logout
 router.post('/logout', (req, res) => {
-  res.clearCookie(COOKIE_NAME);
+  res.clearCookie(COOKIE_NAME, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
   res.json({ message: 'Logged out successfully' });
 });
 

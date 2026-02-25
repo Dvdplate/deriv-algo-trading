@@ -10,18 +10,17 @@ import authRoutes from './api/auth.js';
 import tradesRoutes from './api/trades.js';
 import User from './models/User.js';
 import Volatility100Strategy from "./strategies/Volatility100Strategy.js";
+import { JWT_SECRET, COOKIE_NAME } from './authConfig.js';
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
 
 const PORT = process.env.REACT_APP_BACKEND_PORT || 5000;
-const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-trading-key-12345';
-const COOKIE_NAME = 'session_token';
 
 // Express Middleware
 app.use(cors({
-  origin: 'http://localhost:3000', // Need to allow React dev server if different port, wait react runs on 3001 if backend is 3000
+  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
   credentials: true
 }));
 app.use(express.json());
@@ -89,9 +88,14 @@ wss.on('connection', (ws, req) => {
     }
 
     ws.on('message', (message) => {
+      // Basic size limit
+      if (message.length > 1024) return;
+      
       try {
         const msg = JSON.parse(message);
-        if (msg.type === 'COMMAND' && botInstance) {
+        const VALID_ACTIONS = new Set(['START', 'STOP']);
+        
+        if (msg.type === 'COMMAND' && botInstance && VALID_ACTIONS.has(msg.action)) {
           if (msg.action === 'STOP') {
             botInstance.pauseManual();
             broadcast({ type: 'BOT_STATUS', status: 'STOPPED' });

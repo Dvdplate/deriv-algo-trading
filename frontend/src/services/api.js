@@ -38,7 +38,11 @@ export const authAPI = {
     return response.data;
   },
   logout: async () => {
-    // Optionally call backend to invalidate cookie here: await apiClient.post('/auth/logout');
+    try {
+      await apiClient.post('/auth/logout');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     localStorage.removeItem('isAuthenticated');
     localStorage.removeItem('user');
   },
