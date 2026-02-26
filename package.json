@@ -1,33 +1,15 @@
 {
-  "name": "app",
+  "name": "deriv-algo-trading",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "npm install && docker-compose build",
+    "backend:dev": "docker-compose up",
+    "frontend:dev": "cd frontend && npm run start"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Dvdplate/deriv-algo-trading.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Dvdplate/deriv-algo-trading/issues"
-  },
-  "homepage": "https://github.com/Dvdplate/deriv-algo-trading#readme",
-  "dependencies": {
-    "dotenv": "^16.6.1",
-    "mongoose": "^8.23.0",
-    "technicalindicators": "^3.1.0",
-    "winston": "^3.19.0",
-    "ws": "^8.19.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.0"
-  }
+  "description": "A full-stack algorithmic trading bot for Deriv, featuring a Node.js/MongoDB backend and a React frontend dashboard.",
+  "private": true
 }
